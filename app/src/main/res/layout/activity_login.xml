@@ -106,17 +106,6 @@
         app:layout_constraintTop_toBottomOf="@id/loginCardView"
         />
 
-    <ImageView
-        android:layout_marginTop="10dp"
-        android:id="@+id/runWomenImg"
-        android:layout_width="250dp"
-        android:layout_height="350dp"
-        android:src="@drawable/run_women"
-        android:alpha="0.5"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loginCardView"
-        />
-
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="150dp"

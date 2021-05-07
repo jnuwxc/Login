@@ -3,6 +3,8 @@ package com.example.login;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
@@ -37,8 +39,8 @@ public class LoginActivity extends AppCompatActivity {
         ObjectAnimator.ofFloat(binding.runManImg, "translationX", getImgTranX())
                 .setDuration(1000).start();
         binding.loginBtn.setOnClickListener(v -> {
-            String account = binding.accountEdit.getText().toString();
-            String password = binding.passwordEdit.getText().toString();
+            String account = binding.accountEdit.getText().toString().trim();
+            String password = binding.passwordEdit.getText().toString().trim();
             Log.d(TAG, "onCreate: " + account + " " + password);
             if(passwordIsRight(account, password)){
                getSharedPreferences("login", Context.MODE_PRIVATE)
@@ -46,19 +48,16 @@ public class LoginActivity extends AppCompatActivity {
                        .putString("account", account)
                        .putBoolean("isLogin", true)
                        .apply();
-               // 结束动画
-               ObjectAnimator.ofFloat(binding.runManImg, "translationX", getImgTranX() * 2)
-                        .setDuration(1000).start();
-               // 动画结束再跳转，开启一个线程暂停和动画相同时间。
-               Thread thread = new Thread(new Runnable() {
+               // 播放结束动画
+               ObjectAnimator endAnimator = ObjectAnimator.ofFloat(binding.runManImg, "translationX", getImgTranX() * 2);
+               endAnimator.setDuration(1000).start();
+               endAnimator.addListener(new AnimatorListenerAdapter() {
                    @Override
-                   public void run() {
-                       SystemClock.sleep(1000);
+                   public void onAnimationEnd(Animator animation) {
                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                        startActivity(intent);
                    }
                });
-               thread.start();
             }else {
                 Toast.makeText(this, "账号或密码错误，请核实后重新输入", Toast.LENGTH_LONG).show();
             }
@@ -91,7 +90,9 @@ public class LoginActivity extends AppCompatActivity {
      * @return 是否正确
      */
     private boolean passwordIsRight(String account, String password){
-
+        if(account.equals("") || password.equals("")){
+            return false;
+        }
         //待实现
         return true;
     }
