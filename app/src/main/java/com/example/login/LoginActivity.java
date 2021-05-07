@@ -1,36 +1,69 @@
 package com.example.login;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.example.login.databinding.ActivityLoginBinding;
+
+import java.util.Date;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getSupportActionBar().hide();
 
-        ImageView runManImg = findViewById(R.id.runManImg);
-        ObjectAnimator runManAnimator = ObjectAnimator.ofFloat(runManImg, "translationX", getImgTranX());
-        runManAnimator.setDuration(1500);
-        runManAnimator.start();
-//        SharedPreferences loginSP = getSharedPreferences("login", Context.MODE_PRIVATE);
-//        loginSP.edit()
-//                .putString("userName", "test")
-//                .putBoolean("isLogin", true)
-//                .apply();
+        ObjectAnimator.ofFloat(binding.runManImg, "translationX", getImgTranX())
+                .setDuration(1000).start();
+        binding.loginBtn.setOnClickListener(v -> {
+            String account = binding.accountEdit.getText().toString();
+            String password = binding.passwordEdit.getText().toString();
+            Log.d(TAG, "onCreate: " + account + " " + password);
+            if(passwordIsRight(account, password)){
+               getSharedPreferences("login", Context.MODE_PRIVATE)
+                       .edit()
+                       .putString("account", account)
+                       .putBoolean("isLogin", true)
+                       .apply();
+               // 结束动画
+               ObjectAnimator.ofFloat(binding.runManImg, "translationX", getImgTranX() * 2)
+                        .setDuration(1000).start();
+               // 动画结束再跳转，开启一个线程暂停和动画相同时间。
+               Thread thread = new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+                       SystemClock.sleep(1000);
+                       Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                       startActivity(intent);
+                   }
+               });
+               thread.start();
+            }else {
+                Toast.makeText(this, "账号或密码错误，请核实后重新输入", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     /**
@@ -51,4 +84,15 @@ public class LoginActivity extends AppCompatActivity {
         return screenWidth / 2 + imgWidthDp * screenScale / 2 ;
     }
 
+    /**
+     * 向服务器请求，验证账号密码是否正确
+     * @param account 账号
+     * @param password 密码
+     * @return 是否正确
+     */
+    private boolean passwordIsRight(String account, String password){
+
+        //待实现
+        return true;
+    }
 }

@@ -53,6 +53,7 @@
                 android:layout_marginTop="20dp"/>
 
             <EditText
+                android:id="@+id/accountEdit"
                 android:layout_width="230dp"
                 android:layout_height="70dp"
                 android:background="@null"
@@ -83,6 +84,7 @@
 
 
             <EditText
+                android:id="@+id/passwordEdit"
                 android:layout_width="230dp"
                 android:layout_height="70dp"
                 android:background="@null"
@@ -116,6 +118,7 @@
         />
 
     <Button
+        android:id="@+id/loginBtn"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:text="登录"
